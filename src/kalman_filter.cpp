@@ -1,4 +1,6 @@
 #include "kalman_filter.h"
+#include <iostream>
+#include <cmath>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -37,7 +39,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   */
   // Recalculate x object state to rho, theta, rho_dot coordinates
   double rho = sqrt(x_(0)*x_(0) + x_(1)*x_(1));
-  double theta = atan2(x_(0),x_(1));
+  double theta = atan2(x_(1),x_(0));
   double rho_dot = (x_(0)*x_(2) + x_(1)*x_(3)) / rho;
   VectorXd h = VectorXd(3); // h(x_)
   h << rho, theta, rho_dot;
@@ -45,8 +47,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd y = z - h;
 
   // Fixing the Udacity review ;)
-  if( y(1) > PI_ ) y(1) -= 2*PI_;
-  if( y(1) < -PI_ ) y(1) += 2*PI_;
+  if( y(1) > M_PI ) y(1) -= 2*M_PI;
+  if( y(1) < -M_PI ) y(1) += 2*M_PI;
   
   // Calculations are essentially the same to the Update function
   KF(y);
